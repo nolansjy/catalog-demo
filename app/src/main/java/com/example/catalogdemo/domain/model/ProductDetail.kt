@@ -6,6 +6,6 @@ data class ProductDetail(
     val description: String,
     val category: String,
     val images: List<String>,
-    val price: String,
+    val price: Float,
     val rating: Float
 )
