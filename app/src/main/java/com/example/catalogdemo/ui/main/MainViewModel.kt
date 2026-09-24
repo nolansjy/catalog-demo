@@ -46,7 +46,7 @@ class ProductListVewModel @Inject constructor(
     private val allProductPageFlow: Flow<PagingData<ProductItem>> =
         Pager(
             config = PagingConfig(
-                pageSize = 10,
+                pageSize = 20,
                 enablePlaceholders = true
             ),
             pagingSourceFactory = {

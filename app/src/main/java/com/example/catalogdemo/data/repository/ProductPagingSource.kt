@@ -14,10 +14,8 @@ class ProductPagingSource (
         val skip = params.key ?: 0
         val limit = params.loadSize
         return try {
-            Log.println(Log.INFO, "SOS", "$skip, $limit")
             val responseData = apiService.getProductListAPI(limit, skip)
             val body = responseData.products.map { it.toProductList() }
-            Log.println(Log.INFO, "SOS", "$body")
 
             LoadResult.Page(
                 data = body,
@@ -25,7 +23,6 @@ class ProductPagingSource (
                 nextKey = if (body.isEmpty() || body.size < limit) null else skip + body.size
             )
         } catch (e: Exception) {
-            Log.println(Log.ERROR, "SOS", "${e.message}")
             LoadResult.Error(e)
         }
     }
