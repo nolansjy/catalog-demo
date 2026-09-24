@@ -28,14 +28,14 @@ fun ProductCard(item: ProductItem, navToDetail: (Int) -> Unit){
             Text(
                 modifier = Modifier.padding(vertical = 10.dp),
                 text = item.title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
             )
             Text(
                 text = "RM${item.price}",
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
         }
