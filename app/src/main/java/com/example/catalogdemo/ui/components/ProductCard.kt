@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ fun ProductCard(item: ProductItem, navToDetail: (Int) -> Unit){
         Column(modifier = Modifier.padding(12.dp)){
             AsyncImage(
                 item.thumbnail,
+                placeholder = painterResource(R.drawable.placeholder),
                 contentDescription = item.title
             )
             Text(

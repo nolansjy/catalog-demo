@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt.android)
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "2.3.20"
 }
 
 android {
@@ -57,6 +58,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation("androidx.navigation:navigation-compose:2.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     implementation(libs.retrofit)
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")

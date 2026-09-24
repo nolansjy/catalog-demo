@@ -1,5 +1,6 @@
 package com.example.catalogdemo.ui.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,45 +18,48 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.catalogdemo.R
 import com.example.catalogdemo.domain.model.ProductDetail
-import com.example.catalogdemo.domain.model.ProductItem
 
 @ExperimentalMaterial3Api
 @Composable
-fun ProductScreen(){
+fun ProductScreen(
+    viewModel: ProductViewModel = hiltViewModel(),
+    onNavBack: () -> Unit
+){
+    val detailState by viewModel.productDetail.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {}, // No title needed
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNavBack) {
                         Icon(painter = painterResource(R.drawable.outline_arrow_back_24),
                             contentDescription = "Back")
                     }
@@ -66,8 +68,7 @@ fun ProductScreen(){
             )
         },
         bottomBar = {
-            BottomAppBar(
-            ) {
+            BottomAppBar() {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -88,9 +89,28 @@ fun ProductScreen(){
             }
         }
     ) { innerPadding ->
-       Column(modifier = Modifier.padding(innerPadding)){
-           ProductImages(dummyItem.images)
-           ProductInfo(dummyItem)
+       Column(modifier = Modifier.padding(innerPadding)
+           .fillMaxWidth(),
+           verticalArrangement = Arrangement.Center,
+           horizontalAlignment = Alignment.CenterHorizontally){
+           when(val state = detailState){
+               is ProductDetailUiState.Success -> {
+                   ProductImages(state.product.images)
+                   ProductInfo(state.product)
+               }
+
+               is ProductDetailUiState.Error -> {
+                   Log.println(Log.ERROR, "Console", state.message)
+                   Icon(painter = painterResource(R.drawable.alert_error), contentDescription = "Error",
+                       modifier = Modifier.align(Alignment.CenterHorizontally))
+               }
+               ProductDetailUiState.Idle -> {
+
+               }
+               ProductDetailUiState.Loading -> {
+                   CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+               }
+           }
        }
     }
 }
@@ -98,13 +118,16 @@ fun ProductScreen(){
 @Composable
 fun ProductImages(images: List<String>){
     val pagerState = rememberPagerState(pageCount = {images.size})
-    Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(300.dp)) {
         Column {
             HorizontalPager(
                 state = pagerState
             ) { index ->
                 AsyncImage(
                     model = images[index],
+                    placeholder = painterResource(R.drawable.placeholder),
                     contentDescription = "Product Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -168,12 +191,12 @@ fun ProductInfo(item: ProductDetail){
 }
 
 
-val dummyItem = ProductDetail(
+val placeholderItem = ProductDetail(
     id = 1,
     title = "Dummy Product",
     description = "Dummy Product Description",
     category = "Dummy",
-    images = listOf("app/src/main/res/drawable/birdie.webp", "app/src/main/res/drawable/toucan.webp"),
+    images = listOf(""),
     price = 52.80f,
     rating = 3.4f,
 )
@@ -182,5 +205,5 @@ val dummyItem = ProductDetail(
 @Preview
 @Composable
 fun PreviewProductDetail(){
-    ProductScreen()
+    ProductScreen(onNavBack = {})
 }
