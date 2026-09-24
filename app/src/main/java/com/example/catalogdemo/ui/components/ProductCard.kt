@@ -17,9 +17,9 @@ import com.example.catalogdemo.R
 import com.example.catalogdemo.domain.model.ProductItem
 
 @Composable
-fun ProductCard(item: ProductItem, navToDetail: (Int) -> Unit){
+fun ProductCard(item: ProductItem, navToDetail: (Int, String) -> Unit){
     Card(
-        onClick = { navToDetail(item.id) }
+        onClick = { navToDetail(item.id, item.thumbnail) }
     ){
         Column(modifier = Modifier.padding(12.dp)){
             AsyncImage(

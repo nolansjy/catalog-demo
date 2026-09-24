@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.example.catalogdemo.R
 import com.example.catalogdemo.domain.model.ProductDetail
 
@@ -95,7 +96,7 @@ fun ProductScreen(
            horizontalAlignment = Alignment.CenterHorizontally){
            when(val state = detailState){
                is ProductDetailUiState.Success -> {
-                   ProductImages(state.product.images)
+                   ProductImages(placeholder = viewModel.productThumbnail, images = state.product.images)
                    ProductInfo(state.product)
                }
 
@@ -116,7 +117,7 @@ fun ProductScreen(
 }
 
 @Composable
-fun ProductImages(images: List<String>){
+fun ProductImages(placeholder: String, images: List<String>){
     val pagerState = rememberPagerState(pageCount = {images.size})
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -127,7 +128,7 @@ fun ProductImages(images: List<String>){
             ) { index ->
                 AsyncImage(
                     model = images[index],
-                    placeholder = painterResource(R.drawable.placeholder),
+                    placeholder = rememberAsyncImagePainter(placeholder),
                     contentDescription = "Product Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

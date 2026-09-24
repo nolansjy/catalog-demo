@@ -14,8 +14,8 @@ fun AppNavHost(){
     NavHost(navController = navController, startDestination = Main){
         composable<Main>{
             MainScreen(
-                navToDetail = { productId ->
-                    navController.navigate(Detail(id = productId)) }
+                navToDetail = { productId, thumbnail ->
+                    navController.navigate(Detail(id = productId, thumbnail = thumbnail)) }
             )
         }
 
@@ -28,4 +28,4 @@ fun AppNavHost(){
 }
 
 @Serializable data object Main
-@Serializable data class Detail(val id: Int)
+@Serializable data class Detail(val id: Int, val thumbnail: String)

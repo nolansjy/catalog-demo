@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import coil3.ImageLoader
+import coil3.imageLoader
 import coil3.request.ImageRequest
 import com.example.catalogdemo.domain.model.ProductDetail
 import com.example.catalogdemo.domain.model.ProductItem
@@ -15,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +39,7 @@ class ProductViewModel @Inject constructor(
 
     private val navArgs = savedStateHandle.toRoute<Detail>()
     private val productId : Int = navArgs.id
+    val productThumbnail : String = navArgs.thumbnail
 
     private val _productDetailState =  MutableStateFlow<ProductDetailUiState>(ProductDetailUiState.Idle)
     val productDetail : StateFlow<ProductDetailUiState> get() = _productDetailState.asStateFlow()
@@ -50,17 +53,18 @@ class ProductViewModel @Inject constructor(
             _productDetailState.value = ProductDetailUiState.Loading
             try {
                 val product = repository.getProductDetail(id)
-                val imageLoader = ImageLoader(context)
-                val preloadJobs = product.images.map { url ->
-                    async {
-                        val request = ImageRequest.Builder(context)
-                            .data(url)
-                            .build()
-                        imageLoader.execute(request)
-                    }
-                }
-                preloadJobs.awaitAll()
                 _productDetailState.value = ProductDetailUiState.Success(product)
+
+                coroutineScope {
+                    product.images.map { url ->
+                        async {
+                            val request = ImageRequest.Builder(context)
+                                .data(url)
+                                .build()
+                            context.imageLoader.execute(request)
+                        }
+                    }.awaitAll()
+                }
             } catch (e: Exception) {
                 Log.println(Log.ERROR, "Console", "${e.message}")
                 _productDetailState.value = ProductDetailUiState.Error(e.message ?: "Failed to load product")

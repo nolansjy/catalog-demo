@@ -33,7 +33,7 @@ import com.example.catalogdemo.ui.components.SearchTopBar
 
 @ExperimentalMaterial3Api
 @Composable
-fun MainScreen(navToDetail: (Int) -> Unit){
+fun MainScreen(navToDetail: (Int, String) -> Unit){
     val viewModel: ProductListVewModel = hiltViewModel()
     val productList = viewModel.productPageFlow.collectAsLazyPagingItems()
 
@@ -56,7 +56,7 @@ fun MainScreen(navToDetail: (Int) -> Unit){
             ) { index ->
                 val product = productList[index]
                 if (product != null) {
-                    ProductCard(item = product, navToDetail = { navToDetail(product.id) })
+                    ProductCard(item = product, navToDetail = navToDetail)
                 }
             }
 
