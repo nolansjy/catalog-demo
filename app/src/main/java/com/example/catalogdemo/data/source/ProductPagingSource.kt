@@ -5,17 +5,16 @@ import androidx.paging.PagingState
 import com.example.catalogdemo.data.mapper.toProductList
 import com.example.catalogdemo.data.network.ApiService
 import com.example.catalogdemo.domain.model.ProductItem
+import com.example.catalogdemo.domain.repository.Repository
 
 class ProductPagingSource (
-    private val apiService: ApiService
+    private val repository: Repository
 ): PagingSource<Int, ProductItem>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductItem> {
         val skip = params.key ?: 0
         val limit = params.loadSize
         return try {
-            val responseData = apiService.getProductListAPI(limit, skip)
-            val body = responseData.products.map { it.toProductList() }
-
+            val body = repository.getProductList(limit, skip)
             LoadResult.Page(
                 data = body,
                 prevKey = if (skip == 0) null else skip - limit,

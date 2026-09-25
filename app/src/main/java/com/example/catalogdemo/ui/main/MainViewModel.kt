@@ -40,7 +40,7 @@ sealed interface SearchUiState {
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ProductListVewModel @Inject constructor(
-    private val apiService: ApiService,
+    private val repository: Repository,
 ) : ViewModel(){
 
     private val allProductPageFlow: Flow<PagingData<ProductItem>> =
@@ -50,7 +50,7 @@ class ProductListVewModel @Inject constructor(
                 enablePlaceholders = true
             ),
             pagingSourceFactory = {
-                ProductPagingSource(apiService = apiService)
+                ProductPagingSource(repository = repository)
             }
         )
             .flow
@@ -67,9 +67,8 @@ class ProductListVewModel @Inject constructor(
                     allProductPageFlow
                 }else{
                     flow {
-                        val res = apiService.searchProduct(query)
-                        val searchResults = res.products.map { it.toProductList() }
-                        emit(PagingData.from(searchResults))
+                        val res = repository.searchProduct(query)
+                        emit(PagingData.from(res))
                     }
                 }
             }
