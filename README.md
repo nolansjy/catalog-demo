@@ -1,7 +1,7 @@
 # README
 
 ## Setup
-- Download the appdebug.apk file from [Releases](https://github.com/nolansjy/catalog-demo/releases/download/v1.0.0/app-debug.apk) and install on Android device
+- Download the appdebug.apk file from [Releases](https://github.com/nolansjy/catalog-demo/releases/tag/v1.0.0) and install on Android device
 - Alternatively, clone repo in Android Studio and run on emulator
 
 ## Specifications
