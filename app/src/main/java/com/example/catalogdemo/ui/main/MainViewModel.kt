@@ -10,7 +10,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.catalogdemo.data.mapper.toProductList
 import com.example.catalogdemo.data.network.ApiService
-import com.example.catalogdemo.data.repository.ProductPagingSource
+import com.example.catalogdemo.data.source.ProductPagingSource
 import com.example.catalogdemo.domain.model.ProductItem
 import com.example.catalogdemo.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,19 +28,19 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/* Not used
 sealed interface SearchUiState {
     data object Idle : SearchUiState
     data object Loading : SearchUiState
     data class Success(val results: List<ProductItem>) : SearchUiState
     data class Error(val message: String) : SearchUiState
 }
-
+*/
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ProductListVewModel @Inject constructor(
     private val apiService: ApiService,
-    private val repository: Repository,
 ) : ViewModel(){
 
     private val allProductPageFlow: Flow<PagingData<ProductItem>> =
@@ -76,6 +76,7 @@ class ProductListVewModel @Inject constructor(
             .cachedIn(viewModelScope)
 
 
+    /* initial implementation, not used
     private val _searchState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
     val searchState: StateFlow<SearchUiState> = _searchState.asStateFlow()
 
@@ -90,5 +91,6 @@ class ProductListVewModel @Inject constructor(
             }
         }
     }
+     */
 
 }
